@@ -142,9 +142,9 @@ export const stats = [
 ];
 
 export const features = [
-  { icon: "GraduationCap", title: "Expert Instructors", desc: "Learn from Abhay Gupta and industry mentors." },
+  { icon: "GraduationCap", title: "Expert Instructors", desc: "Learn from experienced instructors and industry mentors." },
   { icon: "Hammer", title: "Project-Based Learning", desc: "Build real projects, not just theory." },
-  { icon: "Languages", title: "Hindi + English", desc: "Concepts explained in simple Hindi." },
+  { icon: "Languages", title: "Accessible Learning", desc: "Concepts explained clearly for everyone." },
   { icon: "Binary", title: "DSA Focused", desc: "Crack coding interviews with confidence." },
   { icon: "Briefcase", title: "Placement Ready", desc: "Resume, mock interviews & referrals." },
   { icon: "Radio", title: "Live Doubt Sessions", desc: "Weekly live sessions to clear doubts." },
@@ -160,7 +160,7 @@ export const testimonials = [
 export const videos = [
   { title: "Complete DSA Roadmap 2025", views: "120K views", id: "v1" },
   { title: "Build a Full Stack App in 1 Hour", views: "85K views", id: "v2" },
-  { title: "DevOps for Beginners (Hindi)", views: "64K views", id: "v3" },
+  { title: "DevOps for Beginners", views: "64K views", id: "v3" },
 ];
 
 export type EventItem = {

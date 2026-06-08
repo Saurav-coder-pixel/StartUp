@@ -21,7 +21,7 @@ export function Footer() {
             <span className="text-gradient">Skills021</span>
           </Link>
           <p className="mt-4 text-sm text-muted-foreground max-w-xs">
-            Learn programming, DSA & exam prep in Hindi. Build real projects and dominate your tech career.
+            Learn programming, DSA & exam prep. Build real projects and dominate your tech career.
           </p>
           <div className="flex gap-2 mt-5">
             {socials.map((s) => (
@@ -42,7 +42,7 @@ export function Footer() {
         <div>
           <h4 className="font-semibold mb-4">Quick Links</h4>
           <ul className="space-y-2 text-sm text-muted-foreground">
-            <li><Link to="/courses" className="hover:text-foreground">Courses</Link></li>
+            <li><Link to="/study" className="hover:text-foreground">Courses</Link></li>
             <li><Link to="/hackathons" className="hover:text-foreground">Hackathons</Link></li>
             <li><Link to="/career" className="hover:text-foreground">Career</Link></li>
             <li><Link to="/study" className="hover:text-foreground">Study</Link></li>
@@ -83,7 +83,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-border py-6 text-center text-sm text-muted-foreground">
-        © 2025 Skills021 by Abhay Gupta. All rights reserved.
+        © 2025 Skills021. All rights reserved.
       </div>
     </footer>
   );

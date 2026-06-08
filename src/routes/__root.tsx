@@ -85,13 +85,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "Skills021 by Abhay Gupta — learn programming, DSA, Java, Django, DevOps, web development & class 10/12 exam prep in Hindi.",
+          "Skills021 — learn programming, DSA, Java, Django, DevOps, web development & class 10/12 exam prep. Accessible learning for everyone.",
       },
-      { name: "author", content: "Abhay Gupta" },
+      { name: "author", content: "Skills021" },
       { property: "og:title", content: "Skills021 — Learn. Build. Dominate." },
       {
         property: "og:description",
-        content: "Programming, DSA & exam prep courses in Hindi for college students and young learners.",
+        content: "Programming, DSA & exam prep courses for college students and young learners.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -133,7 +133,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <Navbar />
-        <main className="min-h-screen pt-16">
+        <main className="min-h-screen pt-14">
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
         </main>

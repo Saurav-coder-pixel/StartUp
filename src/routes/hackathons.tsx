@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useRef, useState } from "react";
 import { motion } from "motion/react";
-import { Calendar, MapPin, Trophy, Users, Timer, ArrowRight } from "lucide-react";
+import { Calendar, MapPin, Trophy, Users, Timer, Handshake, MessageCircle, Mail } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
 import { PaymentModal } from "@/components/PaymentModal";
 import { toast } from "sonner";
@@ -22,6 +22,7 @@ export const Route = createFileRoute("/hackathons")({
 
 function Hackathons() {
   const [selected, setSelected] = useState<EventItem | null>(null);
+  const collaborateRef = useRef<HTMLDivElement>(null);
 
   const register = (e: EventItem) => {
     if (e.fee === 0) {
@@ -31,16 +32,64 @@ function Hackathons() {
     }
   };
 
+  const scrollToCollaborate = () => {
+    collaborateRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-    <div>
-      <section className="relative overflow-hidden hero-grid-bg">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 py-24 text-center">
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl sm:text-6xl font-black">
+    <div style={{ paddingTop: "56px" }}>
+      {/* Compact header — max 180px, with Collaborate button pinned top-right */}
+      <section
+        className="relative overflow-hidden hero-grid-bg"
+        style={{ maxHeight: "180px", padding: "32px 0" }}
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 relative">
+          {/* Breadcrumb */}
+          <nav className="text-xs text-muted-foreground mb-2">
+            <Link to="/" className="hover:text-foreground transition">Home</Link>
+            <span className="mx-1.5">›</span>
+            <span>Hackathons</span>
+          </nav>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-3xl sm:text-4xl font-black"
+          >
             Compete. Collaborate. <span className="text-gradient">Win.</span>
           </motion.h1>
-          <p className="mx-auto mt-5 max-w-xl text-muted-foreground">
-            Join Skills021 hackathons to build, network and win exciting prizes.
-          </p>
+          <p className="mt-1 text-muted-foreground text-sm">Join Skills021 hackathons to build, network and win exciting prizes.</p>
+
+          {/* "Collaborate With Us" button — pinned top-right of header */}
+          <button
+            onClick={scrollToCollaborate}
+            style={{
+              position: "absolute",
+              right: "24px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              background: "transparent",
+              border: "1px solid #4F8EF7",
+              color: "#4F8EF7",
+              borderRadius: "50px",
+              padding: "10px 20px",
+              fontSize: "14px",
+              fontWeight: 600,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              transition: "all 0.3s ease",
+              whiteSpace: "nowrap",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.background = "rgba(79,142,247,0.1)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.background = "transparent";
+            }}
+          >
+            🤝 Collaborate With Us
+          </button>
         </div>
       </section>
 
@@ -95,16 +144,65 @@ function Hackathons() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 mt-20">
+      {/* Collaborate Section — scroll target */}
+      <section
+        ref={collaborateRef}
+        className="mx-auto max-w-7xl px-4 sm:px-6 mt-20 mb-20"
+        id="collaborate"
+      >
         <Reveal>
-          <div className="rounded-3xl glass p-10 text-center hero-grid-bg">
-            <h2 className="text-3xl font-black">Host a Hackathon with Us</h2>
-            <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
-              Partner with Skills021 to run a coding event at your college. We handle the platform, judging and prizes.
+          <div
+            className="rounded-3xl p-10 text-center hero-grid-bg"
+            style={{
+              background: "rgba(255,255,255,0.04)",
+              border: "1px solid rgba(79,142,247,0.2)",
+              backdropFilter: "blur(12px)",
+            }}
+          >
+            <span className="inline-flex items-center justify-center h-16 w-16 rounded-2xl btn-glow mx-auto mb-4">
+              <Handshake size={28} />
+            </span>
+            <h2 className="text-3xl font-black">Host a Hackathon with Skills021</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
+              Partner with Skills021 to run a world-class coding event at your college or organization.
+              We handle the platform, marketing, judging and prizes — you bring the participants.
             </p>
-            <a href="/contact" className="mt-6 inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold btn-glow">
-              Collaborate with us <ArrowRight size={16} />
-            </a>
+            <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
+              Whether it's a 24-hour hackathon, a DSA contest or a full-stack build challenge — we've got the experience to make it legendary.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              <a
+                href="https://wa.me/919999999999?text=Hi%2C%20I%27d%20like%20to%20collaborate%20with%20Skills021%20for%20a%20hackathon"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-white"
+                style={{
+                  background: "linear-gradient(135deg, #25D366, #128C7E)",
+                  borderRadius: "50px",
+                  fontWeight: 600,
+                }}
+              >
+                <MessageCircle size={16} /> WhatsApp Us
+              </a>
+              <a
+                href="mailto:collaborate@skills021.com"
+                className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold"
+                style={{
+                  border: "1px solid rgba(79,142,247,0.5)",
+                  color: "#4F8EF7",
+                  borderRadius: "50px",
+                  transition: "all 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = "rgba(79,142,247,0.1)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.background = "transparent";
+                }}
+              >
+                <Mail size={16} /> Email Us
+              </a>
+            </div>
           </div>
         </Reveal>
       </section>

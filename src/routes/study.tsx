@@ -2,16 +2,18 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Play, Lock, Search, FileText, Download, Youtube } from "lucide-react";
 import { Reveal } from "@/components/Reveal";
+import { CourseCard } from "@/components/CourseCard";
+import { PaymentModal } from "@/components/PaymentModal";
 import { toast } from "sonner";
-import { YT_CHANNEL, lectures, lectureSubjects, notes } from "@/lib/data";
+import { YT_CHANNEL, lectures, lectureSubjects, notes, courses, filterTabs, type Course } from "@/lib/data";
 
 export const Route = createFileRoute("/study")({
   head: () => ({
     meta: [
-      { title: "Study — Lectures & Notes — Skills021" },
-      { name: "description", content: "Watch free lectures and download study notes for DSA, Java, Web Dev, Django, DevOps and class 10/12." },
+      { title: "Study — Courses, Lectures & Notes — Skills021" },
+      { name: "description", content: "Browse courses, watch free lectures and download study notes for DSA, Java, Web Dev, Django, DevOps and class 10/12." },
       { property: "og:title", content: "Study — Skills021" },
-      { property: "og:description", content: "Free video lectures and downloadable notes in Hindi." },
+      { property: "og:description", content: "Free video lectures, downloadable notes and paid courses." },
     ],
     links: [{ rel: "canonical", href: "/study" }],
   }),
@@ -19,26 +21,53 @@ export const Route = createFileRoute("/study")({
 });
 
 function Study() {
-  const [tab, setTab] = useState<"lectures" | "notes">("lectures");
+  const [tab, setTab] = useState<"courses" | "lectures" | "notes">("courses");
   const [subject, setSubject] = useState("All");
+  const [courseTab, setCourseTab] = useState("All");
   const [q, setQ] = useState("");
+  const [selected, setSelected] = useState<Course | null>(null);
 
   const filteredLectures = lectures.filter(
     (l) => (subject === "All" || l.subject === subject) && l.title.toLowerCase().includes(q.toLowerCase()),
   );
 
-  return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-14">
-      <Reveal>
-        <h1 className="text-4xl sm:text-5xl font-black">Study <span className="text-gradient">Hub</span></h1>
-        <p className="mt-3 text-muted-foreground">Lectures and notes organized by subject — free & premium.</p>
-      </Reveal>
+  const filteredCourses = courses.filter((c) => {
+    const matchesQ =
+      c.title.toLowerCase().includes(q.toLowerCase()) ||
+      c.description.toLowerCase().includes(q.toLowerCase());
+    const matchesTab =
+      courseTab === "All" ||
+      (courseTab === "Free" && c.free) ||
+      (courseTab === "Paid" && !c.free) ||
+      c.tags.includes(courseTab) ||
+      c.category === courseTab;
+    return matchesQ && matchesTab;
+  });
 
-      <div className="mt-8 inline-flex rounded-full glass p-1">
-        {(["lectures", "notes"] as const).map((t) => (
+  return (
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 pb-14" style={{ paddingTop: "70px" }}>
+      {/* Compact header — max 180px */}
+      <div
+        className="relative rounded-2xl overflow-hidden hero-grid-bg mb-8"
+        style={{ maxHeight: "180px", padding: "32px 24px" }}
+      >
+        <nav className="text-xs text-muted-foreground mb-2">
+          <Link to="/" className="hover:text-foreground transition">Home</Link>
+          <span className="mx-1.5">›</span>
+          <span>Study</span>
+        </nav>
+        <h1 className="text-3xl sm:text-4xl font-black">
+          Study <span className="text-gradient">Hub</span>
+        </h1>
+        <p className="mt-1 text-muted-foreground text-sm">Courses, lectures and notes organized by subject — free &amp; premium.</p>
+      </div>
+
+      {/* Tab switcher */}
+      <div className="inline-flex rounded-full glass p-1 mb-6">
+        {(["courses", "lectures", "notes"] as const).map((t) => (
           <button
             key={t}
-            onClick={() => setTab(t)}
+            onClick={() => { setTab(t); setQ(""); }}
             className={`rounded-full px-6 py-2 text-sm font-semibold capitalize transition ${
               tab === t ? "btn-glow" : "text-muted-foreground"
             }`}
@@ -48,9 +77,52 @@ function Study() {
         ))}
       </div>
 
-      {tab === "lectures" ? (
+      {/* Courses Tab */}
+      {tab === "courses" && (
         <>
-          <div className="mt-6 flex flex-wrap items-center gap-3">
+          {/* Search + filters — preserved from old Courses page */}
+          <div className="mt-2 relative max-w-md">
+            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search courses…"
+              className="w-full rounded-full glass pl-11 pr-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+
+          <div className="mt-6 flex flex-wrap gap-2">
+            {filterTabs.map((t) => (
+              <button
+                key={t}
+                onClick={() => setCourseTab(t)}
+                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                  courseTab === t ? "btn-glow" : "glass hover:text-primary"
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+
+          {filteredCourses.length === 0 ? (
+            <p className="mt-16 text-center text-muted-foreground">No courses match your search.</p>
+          ) : (
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredCourses.map((c, i) => (
+                <Reveal key={c.id} delay={(i % 3) * 0.06}>
+                  <CourseCard course={c} onEnroll={setSelected} showInstructor={true} />
+                </Reveal>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+
+      {/* Lectures Tab */}
+      {tab === "lectures" && (
+        <>
+          <div className="mt-2 flex flex-wrap items-center gap-3">
             <div className="relative flex-1 min-w-[200px] max-w-sm">
               <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
               <input
@@ -85,7 +157,13 @@ function Study() {
                     ) : (
                       <span className="grid place-items-center h-12 w-12 rounded-full bg-white/90 text-blue-600"><Play size={18} className="fill-blue-600 ml-0.5" /></span>
                     )}
-                    <span className={`absolute top-3 right-3 rounded-full px-2.5 py-1 text-xs font-semibold ${l.premium ? "bg-accent text-accent-foreground" : "bg-success text-white"}`}>
+                    <span
+                      className={`absolute top-3 right-3 rounded-full px-2.5 py-1 text-xs font-semibold ${
+                        l.premium
+                          ? "bg-[rgba(245,166,35,0.2)] text-[#F5A623] border border-[rgba(245,166,35,0.3)]"
+                          : "bg-[rgba(16,185,129,0.2)] text-[#10B981] border border-[rgba(16,185,129,0.3)]"
+                      }`}
+                    >
                       {l.premium ? "Premium" : "Free"}
                     </span>
                   </div>
@@ -95,7 +173,7 @@ function Study() {
                     <div className="mt-2 flex items-center justify-between">
                       <span className="text-xs text-muted-foreground">{l.duration}</span>
                       {l.premium ? (
-                        <Link to="/courses" className="text-sm font-semibold text-accent">Unlock →</Link>
+                        <button onClick={() => setTab("courses")} className="text-sm font-semibold text-[#F5A623]">Unlock →</button>
                       ) : (
                         <a href={YT_CHANNEL} target="_blank" rel="noreferrer" className="text-sm font-semibold text-primary">Watch →</a>
                       )}
@@ -106,7 +184,10 @@ function Study() {
             ))}
           </div>
         </>
-      ) : (
+      )}
+
+      {/* Notes Tab */}
+      {tab === "notes" && (
         <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {notes.map((n, i) => (
             <Reveal key={n.id} delay={(i % 3) * 0.05}>
@@ -115,13 +196,19 @@ function Study() {
                 <h3 className="mt-4 font-bold">{n.title}</h3>
                 <p className="mt-1 text-sm text-muted-foreground">{n.subject} · {n.pages} pages</p>
                 <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
-                  <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${n.premium ? "bg-accent text-accent-foreground" : "bg-success text-white"}`}>
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                      n.premium
+                        ? "bg-[rgba(245,166,35,0.15)] text-[#F5A623] border border-[rgba(245,166,35,0.3)]"
+                        : "bg-[rgba(16,185,129,0.15)] text-[#10B981] border border-[rgba(16,185,129,0.3)]"
+                    }`}
+                  >
                     {n.premium ? "Premium" : "Free"}
                   </span>
                   {n.premium ? (
-                    <Link to="/courses" className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold glass">
+                    <button onClick={() => setTab("courses")} className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold glass">
                       <Lock size={14} /> Unlock
-                    </Link>
+                    </button>
                   ) : (
                     <button onClick={() => toast.success("Notes downloaded!")} className="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold btn-glow">
                       <Download size={14} /> Download
@@ -146,6 +233,13 @@ function Study() {
           </div>
         </Reveal>
       </section>
+
+      <PaymentModal
+        open={!!selected}
+        onClose={() => setSelected(null)}
+        title={selected?.title ?? ""}
+        amount={selected?.price ?? 0}
+      />
     </div>
   );
 }

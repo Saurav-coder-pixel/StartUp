@@ -3,18 +3,29 @@ import { Star, Clock, Users } from "lucide-react";
 import { motion } from "motion/react";
 import type { Course } from "@/lib/data";
 
-export function CourseCard({ course, onEnroll }: { course: Course; onEnroll: (c: Course) => void }) {
+export function CourseCard({
+  course,
+  onEnroll,
+  showInstructor = true,
+}: {
+  course: Course;
+  onEnroll: (c: Course) => void;
+  showInstructor?: boolean;
+}) {
   return (
     <motion.div
       whileHover={{ y: -6 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       className="group rounded-2xl glass overflow-hidden flex flex-col"
+      style={{ transition: "all 0.3s ease" }}
     >
       <div className={`relative h-40 bg-gradient-to-br ${course.gradient} grid place-items-center`}>
         <span className="text-4xl font-black text-white/90">{course.title.split(" ")[0]}</span>
         <span
           className={`absolute top-3 left-3 rounded-full px-2.5 py-1 text-xs font-semibold ${
-            course.free ? "bg-success text-white" : "bg-accent text-accent-foreground"
+            course.free
+              ? "bg-[rgba(16,185,129,0.15)] text-[#10B981] border border-[rgba(16,185,129,0.3)]"
+              : "bg-[rgba(245,166,35,0.15)] text-[#F5A623] border border-[rgba(245,166,35,0.3)]"
           }`}
         >
           {course.free ? "Free" : "Paid"}
@@ -28,10 +39,12 @@ export function CourseCard({ course, onEnroll }: { course: Course; onEnroll: (c:
         <h3 className="font-bold text-lg leading-snug">{course.title}</h3>
         <p className="mt-1.5 text-sm text-muted-foreground line-clamp-2">{course.description}</p>
 
-        <div className="mt-3 flex items-center gap-2 text-sm">
-          <span className="grid place-items-center h-7 w-7 rounded-full btn-glow text-xs font-bold">AG</span>
-          <span className="text-muted-foreground">Abhay Gupta</span>
-        </div>
+        {showInstructor && (
+          <div className="mt-3 flex items-center gap-2 text-sm">
+            <span className="grid place-items-center h-7 w-7 rounded-full btn-glow text-xs font-bold">S</span>
+            <span className="text-muted-foreground">Skills021</span>
+          </div>
+        )}
 
         <div className="mt-3 flex items-center gap-4 text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
@@ -43,7 +56,14 @@ export function CourseCard({ course, onEnroll }: { course: Course; onEnroll: (c:
 
         <div className="mt-4 flex items-center justify-between pt-4 border-t border-border">
           <span className="text-xl font-extrabold">
-            {course.free ? <span className="text-success">Free</span> : `₹${course.price.toLocaleString("en-IN")}`}
+            {course.free ? (
+              <span
+                className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                style={{ background: "rgba(16,185,129,0.15)", color: "#10B981" }}
+              >
+                Free
+              </span>
+            ) : `₹${course.price.toLocaleString("en-IN")}`}
           </span>
           {course.free ? (
             <Link
